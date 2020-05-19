@@ -7,5 +7,6 @@ target 'Commerce Saliency' do
 
   # Pods for Commerce Salience
   pod 'Alamofire'
+  pod 'Toucan'
   
 end

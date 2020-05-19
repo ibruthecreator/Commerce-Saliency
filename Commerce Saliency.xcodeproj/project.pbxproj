@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -88,7 +88,6 @@
 				59DA6BB855E77E88A489A3B6 /* Pods-Commerce Saliency.debug.xcconfig */,
 				747F6668EBF98C97CFC795C9 /* Pods-Commerce Saliency.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
