@@ -14,6 +14,7 @@
 		105C1AFA24733208007C651C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 105C1AF824733208007C651C /* Main.storyboard */; };
 		105C1AFC2473320C007C651C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 105C1AFB2473320C007C651C /* Assets.xcassets */; };
 		105C1AFF2473320C007C651C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 105C1AFD2473320C007C651C /* LaunchScreen.storyboard */; };
+		10B0093E2477A5BC002E5F48 /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B0093D2477A5BC002E5F48 /* SpinnerView.swift */; };
 		10C367782474F5C100D4955B /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C367772474F5C100D4955B /* CanvasView.swift */; };
 		10C3677A2474F5FF00D4955B /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C367792474F5FF00D4955B /* ToolbarView.swift */; };
 /* End PBXBuildFile section */
@@ -28,6 +29,7 @@
 		105C1AFB2473320C007C651C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		105C1AFE2473320C007C651C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		105C1B002473320C007C651C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		10B0093D2477A5BC002E5F48 /* SpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerView.swift; sourceTree = "<group>"; };
 		10C367772474F5C100D4955B /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
 		10C367792474F5FF00D4955B /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
 		59DA6BB855E77E88A489A3B6 /* Pods-Commerce Saliency.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Commerce Saliency.debug.xcconfig"; path = "Target Support Files/Pods-Commerce Saliency/Pods-Commerce Saliency.debug.xcconfig"; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				105C1B002473320C007C651C /* Info.plist */,
 				10C367772474F5C100D4955B /* CanvasView.swift */,
 				10C367792474F5FF00D4955B /* ToolbarView.swift */,
+				10B0093D2477A5BC002E5F48 /* SpinnerView.swift */,
 			);
 			path = "Commerce Saliency";
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 				10C3677A2474F5FF00D4955B /* ToolbarView.swift in Sources */,
 				105C1AF324733208007C651C /* AppDelegate.swift in Sources */,
 				10C367782474F5C100D4955B /* CanvasView.swift in Sources */,
+				10B0093E2477A5BC002E5F48 /* SpinnerView.swift in Sources */,
 				105C1AF524733208007C651C /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

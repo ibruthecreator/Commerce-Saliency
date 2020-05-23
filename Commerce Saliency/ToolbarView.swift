@@ -36,30 +36,36 @@ class ToolbarView: UIView {
     func loadTools() {
         self.isUserInteractionEnabled = true
         
+        let configuration = UIImage.SymbolConfiguration(pointSize: 30)
+        
         let addPictureButton = UIButton()
-        addPictureButton.setImage(UIImage(named: "picture"), for: .normal)
+        addPictureButton.setImage(UIImage(systemName: "photo.on.rectangle", withConfiguration: configuration), for: .normal)
         addPictureButton.imageView?.contentMode = .scaleAspectFit
         addPictureButton.heightAnchor.constraint(equalToConstant: 43).isActive = true
         addPictureButton.widthAnchor.constraint(equalToConstant: 43).isActive = true
         addPictureButton.addTarget(self, action: #selector(didClickAddImageButton(_:)), for: .touchUpInside)
+        addPictureButton.tintColor = UIColor.black.withAlphaComponent(0.7)
         
         let addTextButton = UIButton()
-        addTextButton.setImage(UIImage(named: "text"), for: .normal)
+        addTextButton.setImage(UIImage(systemName: "textformat", withConfiguration: configuration), for: .normal)
         addTextButton.imageView?.contentMode = .scaleAspectFit
         addTextButton.heightAnchor.constraint(equalToConstant: 43).isActive = true
         addTextButton.widthAnchor.constraint(equalToConstant: 43).isActive = true
+        addTextButton.addTarget(self, action: #selector(didClickAddTextButton(_:)), for: .touchUpInside)
+        addTextButton.tintColor = UIColor.black.withAlphaComponent(0.7)
         
         let changeColorButton = UIButton()
-        changeColorButton.setImage(UIImage(named: "color"), for: .normal)
+        changeColorButton.setImage(UIImage(systemName: "eyedropper", withConfiguration: configuration), for: .normal)
         changeColorButton.imageView?.contentMode = .scaleAspectFit
         changeColorButton.heightAnchor.constraint(equalToConstant: 43).isActive = true
         changeColorButton.widthAnchor.constraint(equalToConstant: 43).isActive = true
         changeColorButton.addTarget(self, action: #selector(showColorPicker(_:)), for: .touchUpInside)
+        changeColorButton.tintColor = UIColor.black.withAlphaComponent(0.7)
         
         let horizontalStackView = UIStackView()
         horizontalStackView.axis = .horizontal
         horizontalStackView.distribution = .equalSpacing
-        horizontalStackView.spacing = 10
+        horizontalStackView.spacing = 25
         
         horizontalStackView.addArrangedSubview(addPictureButton)
         horizontalStackView.addArrangedSubview(addTextButton)
@@ -80,9 +86,14 @@ class ToolbarView: UIView {
     @objc func showColorPicker(_ sender: UIButton) {
         delegate?.didClickColorWheel()
     }
+    
+    @objc func didClickAddTextButton(_ sender: UIButton) {
+        delegate?.didClickAddTextButton()
+    }
 }
 
 protocol ToolBarDelegate {
     func didClickAddImageButton()
     func didClickColorWheel()
+    func didClickAddTextButton()
 }

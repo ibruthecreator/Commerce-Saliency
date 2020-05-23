@@ -28,6 +28,7 @@ class ViewController: UIViewController {
     var originalImage: UIImage?
     var maskedImage: UIImage?
     var picker = UIImagePickerController()
+    var spinner: UIActivityIndicatorView = UIActivityIndicatorView(style: .large)
     
     // MARK: - Variables
     let colorPickerHeight = 150
@@ -63,24 +64,34 @@ class ViewController: UIViewController {
         canvasView.isUserInteractionEnabled = true
         
         toolbarView.loadTools()
-        canvasView.addRoundedBorder()
+        canvasView.setupViews()
         
         toolbarView.delegate = self
         
-        colorPicker.frame = CGRect(x: Int(self.view.center.x - (CGFloat(colorPickerWidth / 2))), y: Int(self.view.center.y + 150), width: colorPickerWidth, height: colorPickerHeight)
-        brightnessSlider.frame = CGRect(x: Int(self.view.center.x - (CGFloat(colorPickerWidth / 2))), y: Int(self.view.center.y + 100), width: brightnessSliderWidth, height: brightnessSliderHeight)
+        colorPicker.frame = CGRect(x: Int(self.view.center.x - (CGFloat(colorPickerWidth / 2))), y: Int(self.toolbarView.center.y - (self.toolbarView.frame.height * 2) - 50), width: colorPickerWidth, height: colorPickerHeight)
+        brightnessSlider.frame = CGRect(x: Int(self.view.center.x - (CGFloat(brightnessSliderWidth / 2))), y: Int(colorPicker.center.y) + 85, width: brightnessSliderWidth, height: brightnessSliderHeight)
         
         colorPicker.connect(brightnessSlider)
         colorPicker.addHandle(at: .white)
         
         colorPicker.addTarget(self, action: #selector(colorDidChangeValue(_:)), for: .valueChanged)
         brightnessSlider.addTarget(self, action: #selector(sliderDidChangeValue(_:)), for: .valueChanged)
-    
-        self.view.addSubview(colorPicker)
-        self.view.addSubview(brightnessSlider)
         
-        colorPicker.isHidden = colorPickerHidden
-        brightnessSlider.isHidden = colorPickerHidden
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.startAnimating()
+        spinner.alpha = 0.0
+
+        view.addSubview(spinner)
+
+        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        let hideKeyboardGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tappedOutOfKeyboard(_ :)))
+        self.view.addGestureRecognizer(hideKeyboardGestureRecognizer)
+    }
+    
+    @objc func tappedOutOfKeyboard(_ gesture: UITapGestureRecognizer) {
+        canvasView.hideKeyboard()
     }
     
     @IBAction func clearCanvas(_ sender: Any) {
@@ -118,18 +129,35 @@ class ViewController: UIViewController {
     @objc func sliderDidChangeValue(_ slider: ChromaBrightnessSlider) {
         canvasView.changeBackgroundColor(to: slider.currentColor)
     }
+    
+    func addRemoveColorPicker() {
+        DispatchQueue.main.async {
+            if self.colorPickerHidden {
+                self.colorPicker.removeFromSuperview()
+                self.brightnessSlider.removeFromSuperview()
+            } else {
+                self.view.addSubview(self.colorPicker)
+                self.view.addSubview(self.brightnessSlider)
+            }
+        }
+        
+        colorPickerHidden = !colorPickerHidden
+    }
 }
 
 extension ViewController: ToolBarDelegate {
     func didClickAddImageButton() {
+        picker.allowsEditing = true
         picker.sourceType = .photoLibrary
         self.present(picker, animated: true, completion: nil)
     }
     
     func didClickColorWheel() {
-        colorPickerHidden = !colorPickerHidden
-        colorPicker.isHidden = colorPickerHidden
-        brightnessSlider.isHidden = colorPickerHidden
+        addRemoveColorPicker()
+    }
+    
+    func didClickAddTextButton() {
+        canvasView.addText()
     }
 }
 
@@ -139,15 +167,18 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let image = info[.originalImage] as? UIImage else {
+        guard let image = info[.editedImage] as? UIImage else {
             self.picker.dismiss(animated: true, completion: nil)
             fatalError("failed to fetch image")
         }
+        self.spinner.alpha = 1.0
         
         self.originalImage = image
         self.picker.dismiss(animated: true, completion: nil)
         
         APIController.sharedInstance.uploadImage(image) { (success, maskImage) in
+            self.spinner.alpha = 0
+
             if success && maskImage != nil {
                 if let toucanImage = Toucan(image: self.originalImage!).maskWithImage(maskImage: maskImage!).image {
                     self.maskedImage = toucanImage
