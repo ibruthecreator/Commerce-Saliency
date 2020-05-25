@@ -12,6 +12,11 @@ class CanvasView: UIView {
     var numberOfElements = 0
     var contentView: UIView = UIView() // Where all the actual content goes
     
+    // Temporary text view transform variable
+    var currentTextViewTransform: CGAffineTransform?
+    var currentFontSize: CGFloat = 22
+    var originalTextSize: CGFloat = 22
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -84,14 +89,17 @@ class CanvasView: UIView {
         textView.text = placeholder
         textView.backgroundColor = UIColor.clear
         textView.textColor = color
-        textView.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        textView.font = UIFont(name: "CircularStd-Bold", size: originalTextSize)
         textView.textAlignment = .center
         textView.sizeToFit()
+        textView.center = self.contentView.center
         textView.delegate = self
         
         addGestureRecognizersToView(textView)
         
         self.contentView.addSubview(textView)
+        
+        textView.becomeFirstResponder()
     }
     
     func clearCanvas() {
@@ -110,14 +118,22 @@ class CanvasView: UIView {
     func addGestureRecognizersToView(_ view: UIView) {
         // Assign a tag to the view based on the number of elements, then increment so no two views have the same tag
         view.isUserInteractionEnabled = true
+        view.isMultipleTouchEnabled = true
+        
         view.tag = numberOfElements
         numberOfElements += 1
         
+        // Pan Gesture Recognizer for moving a node around
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGesture(_:)))
         view.addGestureRecognizer(panGestureRecognizer)
         
+        // Pinch Gesture Recognizer for scaling up or down a node
         let pinchGestureRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(pinchGesture(_:)))
         view.addGestureRecognizer(pinchGestureRecognizer)
+        
+        // Rotate Gesture Recognizer for rotating a node CW or CCW
+        let rotateGestureRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(rotateGesture(_:)))
+        view.addGestureRecognizer(rotateGestureRecognizer)
         
         // If not a text view, and it's tapped hide keyboard
         if !(view is UITextView) {
@@ -145,14 +161,36 @@ class CanvasView: UIView {
     }
     
     @objc func pinchGesture(_ gesture: UIPinchGestureRecognizer) {
-        // 1
+        if let textView = gesture.view as? UITextView { // Slightly different logic for a UITextView as the fonts have to be scaled too
+            self.currentTextViewTransform = textView.transform
+            textView.transform = .identity
+            
+            if gesture.state == .began {
+                gesture.scale = textView.font!.pointSize * 0.1
+            }
+            if 1 <= gesture.scale && gesture.scale <= 10  {
+                textView.font = UIFont(name: "CircularStd-Bold", size: gesture.scale * 10)
+
+                textViewDidChange(textView)
+            }
+            
+            textView.transform = self.currentTextViewTransform ?? .identity
+        } else if let gestureView = gesture.view {
+            if gesture.state == .began || gesture.state == .changed {
+               gestureView.transform = (gestureView.transform.scaledBy(x: gesture.scale, y: gesture.scale))
+               gesture.scale = 1.0
+            }
+        }
+    }
+    
+    @objc func rotateGesture(_ gesture: UIRotationGestureRecognizer) {
         guard let gestureView = gesture.view else {
             return
         }
         
         if gesture.state == .began || gesture.state == .changed {
-           gestureView.transform = (gestureView.transform.scaledBy(x: gesture.scale, y: gesture.scale))
-           gesture.scale = 1.0
+           gestureView.transform = gestureView.transform.rotated(by: gesture.rotation)
+           gesture.rotation = 0
         }
     }
     
@@ -178,6 +216,26 @@ class CanvasView: UIView {
 }
 
 extension CanvasView: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        let transform = textView.transform
+        self.currentTextViewTransform = transform
+        self.currentFontSize = textView.font?.pointSize ?? 22
+        
+        UIView.animate(withDuration: 0.3) {
+            textView.font = UIFont(name: "CircularStd-Bold", size: self.originalTextSize)
+            textView.transform = .identity  // Revert to origin for now
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if let currentTransform = self.currentTextViewTransform {
+            UIView.animate(withDuration: 0.3) {
+                textView.font = UIFont(name: "CircularStd-Bold", size: self.currentFontSize)
+                textView.transform = currentTransform
+            }
+        }
+    }
+    
     func textViewDidChange(_ textView: UITextView) {
         let newSize = textView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         textView.frame.size = CGSize(width: newSize.width, height: newSize.height)

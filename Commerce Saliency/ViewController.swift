@@ -20,6 +20,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var canvasView: CanvasView!
     @IBOutlet weak var toolbarView: ToolbarView!
     
+    var backgroundColorView: UIView = UIView()
+    
     var colorPickerHidden = true
     
     var colorPicker = ChromaColorPicker(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
@@ -88,6 +90,19 @@ class ViewController: UIViewController {
         
         let hideKeyboardGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tappedOutOfKeyboard(_ :)))
         self.view.addGestureRecognizer(hideKeyboardGestureRecognizer)
+        
+        self.view.addSubview(backgroundColorView)
+        
+        backgroundColorView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundColorView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+        backgroundColorView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        backgroundColorView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        backgroundColorView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        
+        self.backgroundColorView.addGestureRecognizer(hideKeyboardGestureRecognizer)
+        self.view.sendSubviewToBack(backgroundColorView)
+        
+        backgroundColorView.backgroundColor = self.canvasView.contentView.backgroundColor
     }
     
     @objc func tappedOutOfKeyboard(_ gesture: UITapGestureRecognizer) {
@@ -96,6 +111,7 @@ class ViewController: UIViewController {
     
     @IBAction func clearCanvas(_ sender: Any) {
         canvasView.clearCanvas()
+        backgroundColorView.backgroundColor = self.canvasView.contentView.backgroundColor
     }
     
     @IBAction func exportImage(_ sender: Any) {
@@ -123,11 +139,13 @@ class ViewController: UIViewController {
     @objc func colorDidChangeValue(_ picker: ChromaColorPicker) {
         if let color = picker.currentHandle?.color {
             canvasView.changeBackgroundColor(to: color)
+            self.backgroundColorView.backgroundColor = color.withAlphaComponent(0.5)
         }
     }
     
     @objc func sliderDidChangeValue(_ slider: ChromaBrightnessSlider) {
         canvasView.changeBackgroundColor(to: slider.currentColor)
+        self.backgroundColorView.backgroundColor = slider.currentColor.withAlphaComponent(0.5)
     }
     
     func addRemoveColorPicker() {

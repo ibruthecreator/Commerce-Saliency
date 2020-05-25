@@ -14,6 +14,7 @@
 		105C1AFA24733208007C651C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 105C1AF824733208007C651C /* Main.storyboard */; };
 		105C1AFC2473320C007C651C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 105C1AFB2473320C007C651C /* Assets.xcassets */; };
 		105C1AFF2473320C007C651C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 105C1AFD2473320C007C651C /* LaunchScreen.storyboard */; };
+		109D5D38247B688B0037C5B9 /* CircularStd-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 109D5D37247B688B0037C5B9 /* CircularStd-Bold.otf */; };
 		10B0093E2477A5BC002E5F48 /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B0093D2477A5BC002E5F48 /* SpinnerView.swift */; };
 		10C367782474F5C100D4955B /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C367772474F5C100D4955B /* CanvasView.swift */; };
 		10C3677A2474F5FF00D4955B /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C367792474F5FF00D4955B /* ToolbarView.swift */; };
@@ -29,6 +30,7 @@
 		105C1AFB2473320C007C651C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		105C1AFE2473320C007C651C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		105C1B002473320C007C651C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		109D5D37247B688B0037C5B9 /* CircularStd-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CircularStd-Bold.otf"; sourceTree = "<group>"; };
 		10B0093D2477A5BC002E5F48 /* SpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerView.swift; sourceTree = "<group>"; };
 		10C367772474F5C100D4955B /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
 		10C367792474F5FF00D4955B /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
@@ -75,12 +77,21 @@
 				105C1AF824733208007C651C /* Main.storyboard */,
 				105C1AFB2473320C007C651C /* Assets.xcassets */,
 				105C1AFD2473320C007C651C /* LaunchScreen.storyboard */,
-				105C1B002473320C007C651C /* Info.plist */,
 				10C367772474F5C100D4955B /* CanvasView.swift */,
 				10C367792474F5FF00D4955B /* ToolbarView.swift */,
 				10B0093D2477A5BC002E5F48 /* SpinnerView.swift */,
+				105C1B002473320C007C651C /* Info.plist */,
+				109D5D39247B68C10037C5B9 /* fonts */,
 			);
 			path = "Commerce Saliency";
+			sourceTree = "<group>";
+		};
+		109D5D39247B68C10037C5B9 /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				109D5D37247B688B0037C5B9 /* CircularStd-Bold.otf */,
+			);
+			path = fonts;
 			sourceTree = "<group>";
 		};
 		6512A58C17ECD3E10CB79AF3 /* Frameworks */ = {
@@ -161,6 +172,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				105C1AFF2473320C007C651C /* LaunchScreen.storyboard in Resources */,
+				109D5D38247B688B0037C5B9 /* CircularStd-Bold.otf in Resources */,
 				105C1AFC2473320C007C651C /* Assets.xcassets in Resources */,
 				105C1AFA24733208007C651C /* Main.storyboard in Resources */,
 			);
