@@ -2,7 +2,9 @@
 ## Create quick promotional images for the products your selling
 
 ### Overview
-An intuitive app that allows you to quickly take pictures of your products wherever you are, intelligently crop it using a ML saliency model [repo for backend can be found here](https://github.com/ibruthecreator/saliency-backend), add text and then export.
+An intuitive app that allows you to quickly take pictures of your products wherever you are, intelligently crop it using a ML saliency model, add text and then export.
+
+If you're interested in how the server works, visit the [backend repo.](https://github.com/ibruthecreator/saliency-backend)
 
 ### Demo
 ![First demo](./demos/demo1.gif "First Demo")
