@@ -8,7 +8,7 @@
 
 import UIKit
 import Alamofire
-import ChromaColorPicker
+import ColorSlider
 import Toucan
 
 class ViewController: UIViewController {
@@ -22,28 +22,29 @@ class ViewController: UIViewController {
     
     var backgroundColorView: UIView = UIView()
     
-    var colorPickerHidden = true
-    
-    var colorPicker = ChromaColorPicker(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
-    var brightnessSlider = ChromaBrightnessSlider(frame: CGRect(x: 0, y: 0, width: 130, height: 32))
-        
     var originalImage: UIImage?
     var maskedImage: UIImage?
     var picker = UIImagePickerController()
     var spinner: UIActivityIndicatorView = UIActivityIndicatorView(style: .large)
     
+    let colorSlider = ColorSlider(orientation: .vertical, previewSide: .left)
+    
     // MARK: - Variables
-    let colorPickerHeight = 150
-    let colorPickerWidth = 150
-    let brightnessSliderHeight = 32
-    let brightnessSliderWidth = 130
+    let colorPickerHeight = 200
+    let colorPickerWidth = 15
+    
+    var colorPickerHidden = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupViews()
         // Do any additional setup after loading the view.
     }
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        setupViews()
+    }
+    
     // MARK: - Setup Views
     func setupViews() {
         picker.delegate = self
@@ -51,12 +52,16 @@ class ViewController: UIViewController {
         clearCanvasButton.layer.cornerRadius = 8
         exportCanvasButton.layer.cornerRadius = 8
         
+        // Toolbar View
         toolbarView.layer.cornerRadius = 12
         toolbarView.layer.shadowColor = UIColor.black.cgColor
         toolbarView.layer.shadowRadius = 12
         toolbarView.layer.shadowOpacity = 0.10
         toolbarView.layer.shadowOffset = CGSize(width: 0, height: 5)
         
+        toolbarView.delegate = self
+        
+        // Canvas View
         canvasView.layer.shadowColor = UIColor.black.cgColor
         canvasView.layer.shadowRadius = 12
         canvasView.layer.shadowOpacity = 0.10
@@ -64,21 +69,20 @@ class ViewController: UIViewController {
         
         canvasView.layer.cornerRadius = 12
         canvasView.isUserInteractionEnabled = true
+            
+        // Color Slider
+        colorSlider.frame = CGRect(x: Int(canvasView.frame.maxX) - colorPickerWidth - 10, y: Int(canvasView.frame.minY) + 10, width: colorPickerWidth, height: colorPickerHeight)
+        colorSlider.addTarget(self, action: #selector(colorDidChangeValue(_: )), for: .valueChanged)
+        colorSlider.gradientView.layer.borderWidth = 2.0
+        colorSlider.gradientView.layer.borderColor = UIColor.white.cgColor
         
-        toolbarView.loadTools()
-        canvasView.setupViews()
+        // Should have a hidden state at first
+        colorSlider.alpha = 0.0
+        colorSlider.isUserInteractionEnabled = false
         
-        toolbarView.delegate = self
+        view.addSubview(colorSlider)
         
-        colorPicker.frame = CGRect(x: Int(self.view.center.x - (CGFloat(colorPickerWidth / 2))), y: Int(self.toolbarView.center.y - (self.toolbarView.frame.height * 2) - 50), width: colorPickerWidth, height: colorPickerHeight)
-        brightnessSlider.frame = CGRect(x: Int(self.view.center.x - (CGFloat(brightnessSliderWidth / 2))), y: Int(colorPicker.center.y) + 85, width: brightnessSliderWidth, height: brightnessSliderHeight)
-        
-        colorPicker.connect(brightnessSlider)
-        colorPicker.addHandle(at: .white)
-        
-        colorPicker.addTarget(self, action: #selector(colorDidChangeValue(_:)), for: .valueChanged)
-        brightnessSlider.addTarget(self, action: #selector(sliderDidChangeValue(_:)), for: .valueChanged)
-        
+        // Loading Spinner
         spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.startAnimating()
         spinner.alpha = 0.0
@@ -88,9 +92,12 @@ class ViewController: UIViewController {
         spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
+        // Tap Out Of View Gesture Recognizer
         let hideKeyboardGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tappedOutOfKeyboard(_ :)))
         self.view.addGestureRecognizer(hideKeyboardGestureRecognizer)
         
+        
+        // Background View
         self.view.addSubview(backgroundColorView)
         
         backgroundColorView.translatesAutoresizingMaskIntoConstraints = false
@@ -103,59 +110,44 @@ class ViewController: UIViewController {
         self.view.sendSubviewToBack(backgroundColorView)
         
         backgroundColorView.backgroundColor = self.canvasView.contentView.backgroundColor
+        
+        toolbarView.loadTools()
+        canvasView.setupViews()
     }
     
+    /// Tap gesture to resign first responder
     @objc func tappedOutOfKeyboard(_ gesture: UITapGestureRecognizer) {
         canvasView.hideKeyboard()
     }
     
+    /// Clear canvas view action
     @IBAction func clearCanvas(_ sender: Any) {
         canvasView.clearCanvas()
         backgroundColorView.backgroundColor = self.canvasView.contentView.backgroundColor
     }
     
+    /// Export image action
     @IBAction func exportImage(_ sender: Any) {
         if let canvasExport = canvasView.saveAsImage() {
             UIImageWriteToSavedPhotosAlbum(canvasExport, nil, nil, nil)
         }
     }
-    
-    func randomString(length: Int) -> String {
 
-        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        let len = UInt32(letters.length)
-
-        var randomString = ""
-
-        for _ in 0 ..< length {
-            let rand = arc4random_uniform(len)
-            var nextChar = letters.character(at: Int(rand))
-            randomString += NSString(characters: &nextChar, length: 1) as String
-        }
-
-        return randomString
+    @objc func colorDidChangeValue(_ slider: ColorSlider) {
+        let color = slider.color
+        canvasView.changeBackgroundColor(to: color)
+        self.backgroundColorView.backgroundColor = color.withAlphaComponent(0.5)
     }
     
-    @objc func colorDidChangeValue(_ picker: ChromaColorPicker) {
-        if let color = picker.currentHandle?.color {
-            canvasView.changeBackgroundColor(to: color)
-            self.backgroundColorView.backgroundColor = color.withAlphaComponent(0.5)
-        }
-    }
-    
-    @objc func sliderDidChangeValue(_ slider: ChromaBrightnessSlider) {
-        canvasView.changeBackgroundColor(to: slider.currentColor)
-        self.backgroundColorView.backgroundColor = slider.currentColor.withAlphaComponent(0.5)
-    }
-    
+    /// Hide or remove the color slider
     func addRemoveColorPicker() {
         DispatchQueue.main.async {
             if self.colorPickerHidden {
-                self.colorPicker.removeFromSuperview()
-                self.brightnessSlider.removeFromSuperview()
+                self.colorSlider.isUserInteractionEnabled = false
+                self.colorSlider.fadeOut()
             } else {
-                self.view.addSubview(self.colorPicker)
-                self.view.addSubview(self.brightnessSlider)
+                self.colorSlider.isUserInteractionEnabled = true
+                self.colorSlider.fadeIn()
             }
         }
         
@@ -163,6 +155,7 @@ class ViewController: UIViewController {
     }
 }
 
+// MARK: - ToolBarDelegate
 extension ViewController: ToolBarDelegate {
     func didClickAddImageButton() {
         picker.allowsEditing = true
@@ -179,6 +172,7 @@ extension ViewController: ToolBarDelegate {
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
 extension ViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
@@ -209,14 +203,20 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
 
 
 class APIController {
+    /// Singleton
     static var sharedInstance = APIController()
     
     var endpoint = "http://ec2-54-92-162-148.compute-1.amazonaws.com/upload_image"
     
+    /// Upload an image to the API endpoint
+    /// - Parameters:
+    ///   - image: image to be uploaded
+    ///   - completion: completion handler when the method is completed
+    /// - Returns: success boolean and result image (mask)
     func uploadImage(_ image: UIImage, completion: @escaping (_ success: Bool, _ image: UIImage?) -> ()) {
         if let imageData = image.jpegData(compressionQuality: 0.4) {
             AF.upload(multipartFormData: { (multiFormData) in
-                multiFormData.append(imageData, withName: "imagefile", fileName: "\(self.randomString(length: 8)).jpg", mimeType: "image/jpeg")
+                multiFormData.append(imageData, withName: "imagefile", fileName: "\(self.randomString()).jpg", mimeType: "image/jpeg")
             }, to: URL(string: endpoint)!).responseData { (dataResponse) in
                 if let data = dataResponse.data {
                     let image = UIImage(data: data)
@@ -229,7 +229,10 @@ class APIController {
         }
     }
     
-    func randomString(length: Int) -> String {
+    /// Generate a random string
+    /// - Parameter length: length of string, default of 8
+    /// - Returns: random string
+    func randomString(length: Int = 8) -> String {
       let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
       return String((0..<length).map{ _ in letters.randomElement()! })
     }

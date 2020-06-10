@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double ChromaColorPickerVersionNumber;
-FOUNDATION_EXPORT const unsigned char ChromaColorPickerVersionString[];
+FOUNDATION_EXPORT double ColorSliderVersionNumber;
+FOUNDATION_EXPORT const unsigned char ColorSliderVersionString[];
 

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import ChromaColorPicker
 
 class ToolbarView: UIView {
 

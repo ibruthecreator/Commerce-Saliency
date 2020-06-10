@@ -26,43 +26,46 @@ class CanvasView: UIView {
     }
     
     func setupViews() {
-        addRoundedBorder()
-    }
-    
-    @objc func tappedOutOfKeyboard(_ gesture: UITapGestureRecognizer) {
-        guard let gestureView = gesture.view else {
-            return
-        }
-        
-        // If not a text view, hide keyboard
-        if !(gestureView is UITextView) {
-            hideKeyboard()
-        }
-    }
-    
-    func addRoundedBorder() {
         self.clipsToBounds = true
         self.layer.masksToBounds = true
         
         addSubview(contentView)
         sendSubviewToBack(contentView)
         
-        contentView.layer.cornerRadius = 0
-        contentView.frame = self.bounds
+        // Set constraints
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0).isActive = true
+        contentView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0).isActive = true
+        contentView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
+        
+        self.layoutSubviews()
+        self.contentView.layoutSubviews()
         
         // Setup dashed border
         let dashedBorder = CAShapeLayer()
         dashedBorder.cornerRadius = 12
         dashedBorder.strokeColor = UIColor.black.withAlphaComponent(0.4).cgColor
         dashedBorder.lineDashPattern = [10, 10]
-        dashedBorder.frame = contentView.bounds
+        dashedBorder.frame = self.bounds
         dashedBorder.fillColor = nil
-        dashedBorder.path = UIBezierPath(rect: self.contentView.bounds).cgPath
         dashedBorder.lineCap = .round
         dashedBorder.lineJoin = .round
-        dashedBorder.path = UIBezierPath(roundedRect: self.contentView.bounds, cornerRadius: 12).cgPath
-        
+        dashedBorder.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: 12).cgPath
+
         self.layer.addSublayer(dashedBorder)
+    }
+    
+    // Tap gesture for out of keyboard
+    @objc func tappedOutOfKeyboard(_ gesture: UITapGestureRecognizer) {
+        guard let gestureView = gesture.view else {
+            return
+        }
+        
+        // If not tapped on a text view, hide keyboard
+        if !(gestureView is UITextView) {
+            hideKeyboard()
+        }
     }
     
     /// Adds image to center of canvas
@@ -75,15 +78,19 @@ class CanvasView: UIView {
             }
         }
         
-        let imageView = UIImageView(frame: self.bounds)
+        let imageView = UIImageView(frame: CGRect(origin: .zero, size: CGSize(width: 500, height: 500)))
         imageView.contentMode = .scaleAspectFit
         imageView.image = image
+        imageView.center = self.center
         
         addGestureRecognizersToView(imageView)
-    
         self.contentView.addSubview(imageView)
     }
     
+    /// Add text to canvas view
+    /// - Parameters:
+    ///   - placeholder: Placeholder text
+    ///   - color: Color of text
     func addText(placeholder: String = "Edit this text", color: UIColor = .white) {
         let textView = UITextView()
         textView.text = placeholder
@@ -102,6 +109,7 @@ class CanvasView: UIView {
         textView.becomeFirstResponder()
     }
     
+    /// Clear all elements of canvas and make background white
     func clearCanvas() {
         for view in self.contentView.subviews {
             view.removeFromSuperview()
@@ -111,6 +119,8 @@ class CanvasView: UIView {
         self.contentView.backgroundColor = UIColor.white
     }
     
+    /// Change background color
+    /// - Parameter color: color to change background to
     func changeBackgroundColor(to color: UIColor) {
         self.contentView.backgroundColor = color
     }
@@ -161,7 +171,8 @@ class CanvasView: UIView {
     }
     
     @objc func pinchGesture(_ gesture: UIPinchGestureRecognizer) {
-        if let textView = gesture.view as? UITextView { // Slightly different logic for a UITextView as the fonts have to be scaled too
+        // Slightly different logic for a UITextView as the fonts have to be scaled too
+        if let textView = gesture.view as? UITextView {
             self.currentTextViewTransform = textView.transform
             textView.transform = .identity
             
@@ -189,11 +200,13 @@ class CanvasView: UIView {
         }
         
         if gesture.state == .began || gesture.state == .changed {
-           gestureView.transform = gestureView.transform.rotated(by: gesture.rotation)
-           gesture.rotation = 0
+            gestureView.transform = gestureView.transform.rotated(by: gesture.rotation)
+            gesture.rotation = 0
         }
     }
     
+    /// Creates an image from the content view, clipping everything outside of the canvas
+    /// - Returns: Resulting image
     func saveAsImage() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(contentView.bounds.size, contentView.isOpaque, 0.0)
         defer { UIGraphicsEndImageContext() }
@@ -215,6 +228,7 @@ class CanvasView: UIView {
     }
 }
 
+// MARK: - UITextViewDelegate
 extension CanvasView: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         let transform = textView.transform
@@ -223,7 +237,7 @@ extension CanvasView: UITextViewDelegate {
         
         UIView.animate(withDuration: 0.3) {
             textView.font = UIFont(name: "CircularStd-Bold", size: self.originalTextSize)
-            textView.transform = .identity  // Revert to origin for now
+            textView.transform = .identity  // Revert to origin temporarily for better editing UX
         }
     }
     
