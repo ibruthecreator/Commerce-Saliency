@@ -84,7 +84,6 @@ class ViewController: UIViewController {
         
         // Loading Spinner
         spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.startAnimating()
         spinner.alpha = 0.0
 
         view.addSubview(spinner)
@@ -179,61 +178,30 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        // Cropped image
         guard let image = info[.editedImage] as? UIImage else {
             self.picker.dismiss(animated: true, completion: nil)
-            fatalError("failed to fetch image")
+            fatalError("Failed to fetch image")
         }
-        self.spinner.alpha = 1.0
         
-        self.originalImage = image
+        // Show spinner and start animating
+        self.spinner.alpha = 1.0
+        self.spinner.startAnimating()
+        
         self.picker.dismiss(animated: true, completion: nil)
         
+        // Upload image
         APIController.sharedInstance.uploadImage(image) { (success, maskImage) in
             self.spinner.alpha = 0
-
+            self.spinner.stopAnimating()
+            
             if success && maskImage != nil {
-                if let toucanImage = Toucan(image: self.originalImage!).maskWithImage(maskImage: maskImage!).image {
+                // Create final image using the original image and the mask returned from the API request
+                if let toucanImage = Toucan(image: image).maskWithImage(maskImage: maskImage!).image {
                     self.maskedImage = toucanImage
                     self.canvasView.addImage(image: toucanImage)
                 }
             }
         }
-    }
-}
-
-
-class APIController {
-    /// Singleton
-    static var sharedInstance = APIController()
-    
-    var endpoint = "http://ec2-54-92-162-148.compute-1.amazonaws.com/upload_image"
-    
-    /// Upload an image to the API endpoint
-    /// - Parameters:
-    ///   - image: image to be uploaded
-    ///   - completion: completion handler when the method is completed
-    /// - Returns: success boolean and result image (mask)
-    func uploadImage(_ image: UIImage, completion: @escaping (_ success: Bool, _ image: UIImage?) -> ()) {
-        if let imageData = image.jpegData(compressionQuality: 0.4) {
-            AF.upload(multipartFormData: { (multiFormData) in
-                multiFormData.append(imageData, withName: "imagefile", fileName: "\(self.randomString()).jpg", mimeType: "image/jpeg")
-            }, to: URL(string: endpoint)!).responseData { (dataResponse) in
-                if let data = dataResponse.data {
-                    let image = UIImage(data: data)
-                    completion(true, image)
-                } else {
-                    print("done false")
-                    completion(false, nil)
-                }
-            }
-        }
-    }
-    
-    /// Generate a random string
-    /// - Parameter length: length of string, default of 8
-    /// - Returns: random string
-    func randomString(length: Int = 8) -> String {
-      let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-      return String((0..<length).map{ _ in letters.randomElement()! })
     }
 }

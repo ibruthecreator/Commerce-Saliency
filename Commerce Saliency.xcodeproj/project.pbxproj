@@ -15,6 +15,7 @@
 		105C1AFC2473320C007C651C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 105C1AFB2473320C007C651C /* Assets.xcassets */; };
 		105C1AFF2473320C007C651C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 105C1AFD2473320C007C651C /* LaunchScreen.storyboard */; };
 		1072D728249182A800253334 /* UIView+Fade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1072D727249182A800253334 /* UIView+Fade.swift */; };
+		1072D72A2491B5CB00253334 /* APIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1072D7292491B5CB00253334 /* APIController.swift */; };
 		109D5D38247B688B0037C5B9 /* CircularStd-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 109D5D37247B688B0037C5B9 /* CircularStd-Bold.otf */; };
 		10B0093E2477A5BC002E5F48 /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B0093D2477A5BC002E5F48 /* SpinnerView.swift */; };
 		10C367782474F5C100D4955B /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C367772474F5C100D4955B /* CanvasView.swift */; };
@@ -32,6 +33,7 @@
 		105C1AFE2473320C007C651C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		105C1B002473320C007C651C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1072D727249182A800253334 /* UIView+Fade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Fade.swift"; sourceTree = "<group>"; };
+		1072D7292491B5CB00253334 /* APIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIController.swift; sourceTree = "<group>"; };
 		109D5D37247B688B0037C5B9 /* CircularStd-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CircularStd-Bold.otf"; sourceTree = "<group>"; };
 		10B0093D2477A5BC002E5F48 /* SpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerView.swift; sourceTree = "<group>"; };
 		10C367772474F5C100D4955B /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
@@ -73,16 +75,13 @@
 		105C1AF124733208007C651C /* Commerce Saliency */ = {
 			isa = PBXGroup;
 			children = (
+				1072D72B2491B72100253334 /* Model */,
+				1072D72C2491B72400253334 /* View */,
+				1072D72D2491B72D00253334 /* Controller */,
 				105C1AF224733208007C651C /* AppDelegate.swift */,
 				105C1AF424733208007C651C /* SceneDelegate.swift */,
-				105C1AF824733208007C651C /* Main.storyboard */,
 				105C1AFB2473320C007C651C /* Assets.xcassets */,
 				105C1AFD2473320C007C651C /* LaunchScreen.storyboard */,
-				105C1AF624733208007C651C /* ViewController.swift */,
-				10C367772474F5C100D4955B /* CanvasView.swift */,
-				10C367792474F5FF00D4955B /* ToolbarView.swift */,
-				10B0093D2477A5BC002E5F48 /* SpinnerView.swift */,
-				1072D7262491827700253334 /* Extensions */,
 				105C1B002473320C007C651C /* Info.plist */,
 				109D5D39247B68C10037C5B9 /* fonts */,
 			);
@@ -95,6 +94,34 @@
 				1072D727249182A800253334 /* UIView+Fade.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		1072D72B2491B72100253334 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		1072D72C2491B72400253334 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				105C1AF824733208007C651C /* Main.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		1072D72D2491B72D00253334 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				1072D7292491B5CB00253334 /* APIController.swift */,
+				1072D7262491827700253334 /* Extensions */,
+				105C1AF624733208007C651C /* ViewController.swift */,
+				10C367772474F5C100D4955B /* CanvasView.swift */,
+				10C367792474F5FF00D4955B /* ToolbarView.swift */,
+				10B0093D2477A5BC002E5F48 /* SpinnerView.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 		109D5D39247B68C10037C5B9 /* fonts */ = {
@@ -242,6 +269,7 @@
 				10C3677A2474F5FF00D4955B /* ToolbarView.swift in Sources */,
 				105C1AF324733208007C651C /* AppDelegate.swift in Sources */,
 				10C367782474F5C100D4955B /* CanvasView.swift in Sources */,
+				1072D72A2491B5CB00253334 /* APIController.swift in Sources */,
 				10B0093E2477A5BC002E5F48 /* SpinnerView.swift in Sources */,
 				105C1AF524733208007C651C /* SceneDelegate.swift in Sources */,
 				1072D728249182A800253334 /* UIView+Fade.swift in Sources */,

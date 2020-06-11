@@ -14,8 +14,8 @@ class CanvasView: UIView {
     
     // Temporary text view transform variable
     var currentTextViewTransform: CGAffineTransform?
-    var currentFontSize: CGFloat = 22
-    var originalTextSize: CGFloat = 22
+    var currentFontSize: CGFloat = 26
+    var originalTextSize: CGFloat = 26
     
     override init(frame: CGRect) {
         super.init(frame: frame)
